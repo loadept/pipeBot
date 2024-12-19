@@ -29,7 +29,7 @@ func Music(channelName string, s *discordgo.Session, m *discordgo.MessageCreate)
 	}
 
 	if m.Interaction != nil && m.Interaction.Name == "play" {
-		s.ChannelMessageSendEmbed(m.ChannelID, embed)
 		s.ChannelMessageDelete(m.ChannelID, m.ID)
+		s.ChannelMessageSendEmbed(m.ChannelID, embed)
 	}
 }

@@ -17,6 +17,6 @@ func MessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		s.ChannelMessageSend(m.ChannelID, "Error to delete messages")
 	}
 
-	Wallpaper(ch.Name, s, m)
 	Music(ch.Name, s, m)
+	Wallpaper(ch.Name, s, m)
 }
