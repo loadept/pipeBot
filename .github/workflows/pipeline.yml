@@ -1,0 +1,15 @@
+name: Start bot
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  init:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Hello world
+        run: |
+          echo -e "\e[32mhello world\e[0m"
+          echo -e "fishing..."
