@@ -9,7 +9,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
 	"github.com/loadept/pipeBot/bot/handler"
-	"github.com/loadept/pipeBot/message"
+	"github.com/loadept/pipeBot/internal/message"
 )
 
 var (
