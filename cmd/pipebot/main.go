@@ -12,19 +12,22 @@ import (
 	"github.com/loadept/pipeBot/message"
 )
 
+var (
+	token string
+)
+
 func init() {
 	if err := godotenv.Load(); err != nil {
 		fmt.Printf(".env file not found, using system variables: %v\n", err)
 	}
-}
-
-func main() {
-	token := os.Getenv("TOKEN")
+	token = os.Getenv("TOKEN")
 	if len(token) == 0 {
 		fmt.Println("Error: Please set your TOKEN environment variable")
 		os.Exit(1)
 	}
+}
 
+func main() {
 	dg, err := discordgo.New("Bot " + token)
 	if err != nil {
 		fmt.Printf("Error at: %v", err)
