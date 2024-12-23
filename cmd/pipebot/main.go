@@ -8,7 +8,8 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
-	"github.com/loadept/pipeBot/bot"
+	"github.com/loadept/pipeBot/bot/handler"
+	"github.com/loadept/pipeBot/message"
 )
 
 func init() {
@@ -29,21 +30,30 @@ func main() {
 		fmt.Printf("Error at: %v", err)
 	}
 
-	dg.AddHandler(bot.MessageCreate)
+	messageHandler := &message.MessageHandler{}
+	messageHandler.SubscribeObserver(&handler.MusicChannel{})
+	messageHandler.SubscribeObserver(&handler.WallpaperChannel{})
+	messageHandler.SubscribeObserver(&handler.NewMember{})
+
+	dg.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
+		messageHandler.NotifyObservers(s, m)
+	})
+	dg.AddHandler(func(s *discordgo.Session, g *discordgo.GuildMemberAdd) {
+		messageHandler.NotifyObservers(s, g)
+	})
+
+	dg.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
 
 	err = dg.Open()
 	if err != nil {
 		fmt.Printf("Error to open connection with discord: %v\n", err)
 		return
 	}
-
-	dg.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
+	defer dg.Close()
 
 	fmt.Println("Bot is running. Press Ctrl+C to exit.")
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-stop
-
-	dg.Close()
 }
