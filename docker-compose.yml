@@ -3,6 +3,6 @@ services:
     build: .
     environment:
       - APP_ID=${APP_ID}
-      - PUBLIC_KEY=${PPUBLIC_KEY}
+      - PUBLIC_KEY=${PUBLIC_KEY}
       - TOKEN=${TOKEN}
     tty: true
