@@ -36,6 +36,7 @@ func main() {
 	messageHandler := &message.MessageHandler{}
 	messageHandler.SubscribeObserver(&handler.MusicChannel{})
 	messageHandler.SubscribeObserver(&handler.WallpaperChannel{})
+	messageHandler.SubscribeObserver(&handler.Commands{})
 	messageHandler.SubscribeObserver(&handler.NewMember{})
 
 	dg.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -45,7 +46,7 @@ func main() {
 		messageHandler.NotifyObservers(s, g)
 	})
 
-	dg.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
+	// dg.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
 
 	err = dg.Open()
 	if err != nil {
