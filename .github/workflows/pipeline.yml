@@ -5,11 +5,24 @@ on:
     branches: [ "master" ]
 
 jobs:
-  init:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Hello world
-        run: |
-          echo -e "\e[32mhello world\e[0m"
-          echo -e "fishing..."
+      - name: Deploy bot
+        uses: appleboy/ssh-action@master
+        env:
+          APP_ID: ${{ secrets.APP_ID }}
+          PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
+          TOKEN: ${{ secrets.TOKEN }}
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          envs: APP_ID,PUBLIC_KEY,TOKEN
+          scripts: |
+            cd Tasks/pipeBot
+            git pull
+            docker compose pull
+            docker compose up --build -d 
+            docker system prune -f
