@@ -2,44 +2,28 @@ package action
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/loadept/pipeBot/pkg/throwable"
+	"github.com/loadept/pipeBot/pkg/util"
 )
 
 type RemoveRole struct{}
 
 func (ar *RemoveRole) Execute(s *discordgo.Session, m *discordgo.MessageCreate) {
-	content := strings.Split(m.Content, " ")
-	roleContent := content[len(content)-1]
-
-	roles, err := s.GuildRoles(m.GuildID)
+	targetRole, roleContent, err := util.ValidateRole(s, m)
 	if err != nil {
-		fmt.Println("Error al obtener miembro:", err)
+		throwable.SendErrorEmbed(s, m.ChannelID, err.Error())
 		return
 	}
 
-	var roleID string
-	for _, role := range roles {
-		if strings.EqualFold(roleContent, role.Name) {
-			roleID = role.ID
-			break
-		}
-	}
-
-	if err := s.GuildMemberRoleRemove(m.GuildID, m.Mentions[0].ID, roleID); err != nil {
-		fmt.Println(err)
-		embed := &discordgo.MessageEmbed{
-			Title:       "🔴 Invalid action",
-			Description: "Not recognized action",
-			Color:       0xff0000,
-		}
-		s.ChannelMessageSendEmbed(m.ChannelID, embed)
+	if err := s.GuildMemberRoleRemove(m.GuildID, m.Mentions[0].ID, targetRole.ID); err != nil {
+		throwable.SendErrorEmbed(s, m.ChannelID, "Failed to remove role.")
 		return
 	}
 
 	embed := &discordgo.MessageEmbed{
-		Title:       "🟡 Member add to role",
+		Title:       "🟡 Member removed to role",
 		Description: fmt.Sprintf("Member %s has been removed from role %s", m.Mentions[0].Username, roleContent),
 		Color:       0xe8ff00,
 	}
