@@ -16,6 +16,9 @@ func (c *Commands) NotifyMessage(s *discordgo.Session, m *discordgo.MessageCreat
 
 	content := strings.Split(m.Content, " ")
 	command := content[0]
+	if !strings.HasPrefix(command, "|") {
+		return
+	}
 
 	bot := invoker.NewBot()
 
