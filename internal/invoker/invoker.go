@@ -17,6 +17,7 @@ func NewBot() *Bot {
 	bot.commands["|ban"] = &action.Ban{}
 	bot.commands["|role+"] = &action.AddRole{}
 	bot.commands["|role-"] = &action.RemoveRole{}
+	bot.commands["|role"] = &action.ListRole{}
 
 	return bot
 }

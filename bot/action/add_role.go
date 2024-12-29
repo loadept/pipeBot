@@ -11,7 +11,7 @@ import (
 type AddRole struct{}
 
 func (ar *AddRole) Execute(s *discordgo.Session, m *discordgo.MessageCreate) {
-	targetRole, roleContent, err := util.ValidateRole(s, m)
+	targetRole, err := util.ValidateRole(s, m)
 	if err != nil {
 		throwable.SendErrorEmbed(s, m.ChannelID, err.Error())
 		return
@@ -24,7 +24,7 @@ func (ar *AddRole) Execute(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	embed := &discordgo.MessageEmbed{
 		Title:       "🔵 Member add to role",
-		Description: fmt.Sprintf("Member %s has been assigned to the role %s", m.Mentions[0].Username, roleContent),
+		Description: fmt.Sprintf("Member **%s** has been assigned to the role **%s**", m.Mentions[0].Username, targetRole.Name),
 		Color:       0x00d8ff,
 	}
 	s.ChannelMessageSendEmbed(m.ChannelID, embed)

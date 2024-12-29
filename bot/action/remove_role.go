@@ -11,7 +11,7 @@ import (
 type RemoveRole struct{}
 
 func (ar *RemoveRole) Execute(s *discordgo.Session, m *discordgo.MessageCreate) {
-	targetRole, roleContent, err := util.ValidateRole(s, m)
+	targetRole, err := util.ValidateRole(s, m)
 	if err != nil {
 		throwable.SendErrorEmbed(s, m.ChannelID, err.Error())
 		return
@@ -24,7 +24,7 @@ func (ar *RemoveRole) Execute(s *discordgo.Session, m *discordgo.MessageCreate) 
 
 	embed := &discordgo.MessageEmbed{
 		Title:       "🟡 Member removed to role",
-		Description: fmt.Sprintf("Member %s has been removed from role %s", m.Mentions[0].Username, roleContent),
+		Description: fmt.Sprintf("Member **%s** has been removed from role **%s**", m.Mentions[0].Username, targetRole.Name),
 		Color:       0xe8ff00,
 	}
 	s.ChannelMessageSendEmbed(m.ChannelID, embed)
