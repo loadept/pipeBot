@@ -4,12 +4,12 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-func IsAdmin(member *discordgo.Member, roleMap map[string]*discordgo.Role) bool {
+func IsAdmin(member *discordgo.Member, roleMapByID map[string]*discordgo.Role) bool {
 	if member.Permissions&discordgo.PermissionAdministrator != 0 {
 		return true
 	}
 	for _, roleID := range member.Roles {
-		role, ok := roleMap[roleID]
+		role, ok := roleMapByID[roleID]
 		if !ok {
 			continue
 		}
