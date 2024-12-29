@@ -32,7 +32,7 @@ func (l *ListRole) Execute(s *discordgo.Session, m *discordgo.MessageCreate) {
 		roleMap[role.ID] = role
 	}
 
-	if !util.IsAdmin(member, roleMap) {
+	if !util.IsAdmin(m.Member, roleMap) {
 		throwable.SendErrorEmbed(s, m.ChannelID, throwable.WithoutSufficientPermissions.Error())
 		return
 	}
