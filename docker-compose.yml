@@ -6,3 +6,4 @@ services:
       - PUBLIC_KEY=${PUBLIC_KEY}
       - TOKEN=${TOKEN}
     tty: true
+    restart: always
