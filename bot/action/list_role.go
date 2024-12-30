@@ -50,8 +50,8 @@ func (l *ListRole) Execute(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	embed := &discordgo.MessageEmbed{
-		Title:       "👥 Server Roles",
-		Description: "All roles available on the server",
+		Title:       "👥 User Roles",
+		Description: "All roles to which the user belongs",
 		Fields:      embedFields,
 		Color:       0x00d8ff,
 	}
