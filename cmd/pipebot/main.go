@@ -48,6 +48,8 @@ func main() {
 
 	// dg.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
 
+	go handler.AsyncEvent(dg)
+
 	err = dg.Open()
 	if err != nil {
 		fmt.Printf("Error to open connection with discord: %v\n", err)
