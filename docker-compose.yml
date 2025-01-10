@@ -5,5 +5,6 @@ services:
       - APP_ID=${APP_ID}
       - PUBLIC_KEY=${PUBLIC_KEY}
       - TOKEN=${TOKEN}
+      - CHANNELS=${CHANNELS}
     tty: true
     restart: always
