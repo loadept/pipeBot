@@ -1,6 +1,7 @@
 services:
   bot:
     build: .
+    container_name: pipebot
     environment:
       - APP_ID=${APP_ID}
       - PUBLIC_KEY=${PUBLIC_KEY}
