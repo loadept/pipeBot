@@ -6,11 +6,11 @@ WORKDIR /app
 
 COPY go.mod go.sum ./
 
-RUN go mod download
+RUN go mod download -x
 
 COPY . .
 
-RUN go build cmd/pipebot/main.go
+RUN go build -v -x cmd/pipebot/main.go
 
 FROM alpine:3.21
 
