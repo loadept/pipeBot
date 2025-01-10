@@ -17,7 +17,7 @@ func AsyncEvent(s *discordgo.Session) {
 		return
 	}
 
-	channelIDs := strings.Split(chanels, ",")
+	channelIDs := strings.Split(chanels, ":")
 
 	ticker := time.NewTicker(24 * time.Hour * 13)
 	defer ticker.Stop()
