@@ -2,7 +2,8 @@ name: Start bot
 
 on:
   push:
-    branches: [ "master" ]
+    tags:
+      - v*
 
 jobs:
   deploy:
