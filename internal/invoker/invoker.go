@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/loadept/pipeBot/bot/action"
 	"github.com/loadept/pipeBot/internal/command"
 )
 
@@ -14,12 +13,12 @@ type Bot struct {
 
 func NewBot() *Bot {
 	bot := &Bot{commands: make(map[string]command.Command)}
-	bot.commands["|ban"] = &action.Ban{}
-	bot.commands["|role+"] = &action.AddRole{}
-	bot.commands["|role-"] = &action.RemoveRole{}
-	bot.commands["|role"] = &action.ListRole{}
 
 	return bot
+}
+
+func (b *Bot) SetCommand(action string, command command.Command) {
+	b.commands[action] = command
 }
 
 func (b *Bot) Invoker(command string, s *discordgo.Session, m *discordgo.MessageCreate) {
