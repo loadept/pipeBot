@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
@@ -13,7 +14,8 @@ import (
 )
 
 var (
-	token string
+	token      string
+	channelsID []string
 )
 
 func init() {
@@ -21,10 +23,17 @@ func init() {
 		fmt.Printf(".env file not found, using system variables: %v\n", err)
 	}
 	token = os.Getenv("TOKEN")
-	if len(token) == 0 {
+	if token == "" {
 		fmt.Println("Error: Please set your TOKEN environment variable")
 		os.Exit(1)
 	}
+
+	channels := os.Getenv("CHANNELS")
+	if channels == "" {
+		fmt.Println("Error: The CHANNELS environment variable is not set.")
+		os.Exit(1)
+	}
+	channelsID = strings.Split(channels, ":")
 }
 
 func main() {
@@ -48,7 +57,7 @@ func main() {
 
 	// dg.Identify.Intents = discordgo.IntentsAllWithoutPrivileged
 
-	go handler.AsyncEvent(dg)
+	go handler.AsyncEvent(dg, channelsID)
 
 	err = dg.Open()
 	if err != nil {
