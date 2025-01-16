@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/loadept/pipeBot/bot/action"
 	"github.com/loadept/pipeBot/internal/invoker"
 )
 
@@ -21,6 +22,11 @@ func (c *Commands) NotifyMessage(s *discordgo.Session, m *discordgo.MessageCreat
 	}
 
 	bot := invoker.NewBot()
+
+	bot.SetCommand("|ban", &action.Ban{})
+	bot.SetCommand("|role+", &action.AddRole{})
+	bot.SetCommand("|role-", &action.RemoveRole{})
+	bot.SetCommand("|role", &action.ListRole{})
 
 	bot.Invoker(command, s, m)
 }
