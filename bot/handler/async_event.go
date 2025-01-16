@@ -2,30 +2,20 @@ package handler
 
 import (
 	"fmt"
-	"os"
-	"strings"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/loadept/pipeBot/pkg/throwable"
 )
 
-func AsyncEvent(s *discordgo.Session) {
-	chanels := os.Getenv("CHANNELS")
-	if chanels == "" {
-		fmt.Println("Error: The CHANNELS environment variable is not set.")
-		return
-	}
-
-	channelIDs := strings.Split(chanels, ":")
-
+func AsyncEvent(s *discordgo.Session, channels []string) {
 	ticker := time.NewTicker(24 * time.Hour * 13)
 	defer ticker.Stop()
 
 	for {
 		select {
 		case <-ticker.C:
-			for _, channelID := range channelIDs {
+			for _, channelID := range channels {
 				var lastMessageID string
 				messagesDeleted := 0
 				for {
