@@ -11,15 +11,20 @@ import (
 type Ban struct{}
 
 func (b *Ban) Execute(s *discordgo.Session, m *discordgo.MessageCreate) {
+	logsChannel := util.GetGuildChannel(s, m.GuildID, ".*logs?")
+	if len(logsChannel) == 0 {
+		throwable.SendErrorEmbed(s, logsChannel, throwable.SomethingWentWrong.Error())
+	}
+
 	roles, err := s.GuildRoles(m.GuildID)
 	if err != nil {
-		throwable.SendErrorEmbed(s, m.ChannelID, throwable.SomethingWentWrongRole.Error())
+		throwable.SendErrorEmbed(s, logsChannel, throwable.SomethingWentWrongRole.Error())
 		return
 	}
 
 	member, err := s.GuildMember(m.GuildID, m.Author.ID)
 	if err != nil {
-		throwable.SendErrorEmbed(s, m.ChannelID, throwable.SomethingWentWrongMember.Error())
+		throwable.SendErrorEmbed(s, logsChannel, throwable.SomethingWentWrongMember.Error())
 		return
 	}
 
@@ -29,13 +34,13 @@ func (b *Ban) Execute(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	if !util.IsAdmin(member, roleMapByID) {
-		throwable.SendErrorEmbed(s, m.ChannelID, throwable.WithoutSufficientPermissions.Error())
+		throwable.SendErrorEmbed(s, logsChannel, throwable.WithoutSufficientPermissions.Error())
 		return
 	}
 
 	err = s.GuildBanCreate(m.GuildID, m.Mentions[0].ID, 1)
 	if err != nil {
-		throwable.SendErrorEmbed(s, m.ChannelID, "Error banning member.")
+		throwable.SendErrorEmbed(s, logsChannel, "Error banning member.")
 		return
 	}
 
@@ -44,5 +49,5 @@ func (b *Ban) Execute(s *discordgo.Session, m *discordgo.MessageCreate) {
 		Description: fmt.Sprintf("Member %s has been banned by %s", m.Mentions[0].Username, m.Author.Username),
 		Color:       0xeff6400,
 	}
-	s.ChannelMessageSendEmbed(m.ChannelID, embed)
+	s.ChannelMessageSendEmbed(logsChannel, embed)
 }
