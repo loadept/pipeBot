@@ -11,14 +11,19 @@ import (
 type RemoveRole struct{}
 
 func (ar *RemoveRole) Execute(s *discordgo.Session, m *discordgo.MessageCreate) {
+	logsChannel := util.GetGuildChannel(s, m.GuildID, ".*logs?")
+	if len(logsChannel) == 0 {
+		throwable.SendErrorEmbed(s, logsChannel, throwable.SomethingWentWrong.Error())
+	}
+
 	targetRole, err := util.ValidateRole(s, m)
 	if err != nil {
-		throwable.SendErrorEmbed(s, m.ChannelID, err.Error())
+		throwable.SendErrorEmbed(s, logsChannel, err.Error())
 		return
 	}
 
 	if err := s.GuildMemberRoleRemove(m.GuildID, m.Mentions[0].ID, targetRole.ID); err != nil {
-		throwable.SendErrorEmbed(s, m.ChannelID, "Failed to remove role.")
+		throwable.SendErrorEmbed(s, logsChannel, "Failed to remove role.")
 		return
 	}
 
@@ -27,5 +32,5 @@ func (ar *RemoveRole) Execute(s *discordgo.Session, m *discordgo.MessageCreate) 
 		Description: fmt.Sprintf("Member **%s** has been removed from role **%s**", m.Mentions[0].Username, targetRole.Name),
 		Color:       0xe8ff00,
 	}
-	s.ChannelMessageSendEmbed(m.ChannelID, embed)
+	s.ChannelMessageSendEmbed(logsChannel, embed)
 }
