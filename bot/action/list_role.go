@@ -11,19 +11,24 @@ import (
 type ListRole struct{}
 
 func (l *ListRole) Execute(s *discordgo.Session, m *discordgo.MessageCreate) {
+	logsChannel := util.GetGuildChannel(s, m.GuildID, ".*logs?")
+	if len(logsChannel) == 0 {
+		throwable.SendErrorEmbed(s, logsChannel, throwable.SomethingWentWrong.Error())
+	}
+
 	if err := util.CheckMentions(s, m.ChannelID, m.Mentions); err != nil {
-		throwable.SendErrorEmbed(s, m.ChannelID, err.Error())
+		throwable.SendErrorEmbed(s, logsChannel, err.Error())
 		return
 	}
 	roles, err := s.GuildRoles(m.GuildID)
 	if err != nil {
-		throwable.SendErrorEmbed(s, m.ChannelID, throwable.SomethingWentWrongRole.Error())
+		throwable.SendErrorEmbed(s, logsChannel, throwable.SomethingWentWrongRole.Error())
 		return
 	}
 
 	member, err := s.GuildMember(m.GuildID, m.Mentions[0].ID)
 	if err != nil {
-		throwable.SendErrorEmbed(s, m.ChannelID, throwable.SomethingWentWrongMember.Error())
+		throwable.SendErrorEmbed(s, logsChannel, throwable.SomethingWentWrongMember.Error())
 		return
 	}
 
@@ -33,7 +38,7 @@ func (l *ListRole) Execute(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 
 	if !util.IsAdmin(m.Member, roleMap) {
-		throwable.SendErrorEmbed(s, m.ChannelID, throwable.WithoutSufficientPermissions.Error())
+		throwable.SendErrorEmbed(s, logsChannel, throwable.WithoutSufficientPermissions.Error())
 		return
 	}
 
