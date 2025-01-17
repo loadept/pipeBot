@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/loadept/pipeBot/pkg/throwable"
 	"github.com/loadept/pipeBot/pkg/util"
 )
 
@@ -14,24 +15,23 @@ func (ms *MusicChannel) NotifyMessage(s *discordgo.Session, m *discordgo.Message
 		return
 	}
 
+	logsChannel := util.GetGuildChannel(s, m.GuildID, ".*logs?")
+	if len(logsChannel) == 0 {
+		throwable.SendErrorEmbed(s, logsChannel, throwable.SomethingWentWrong.Error())
+	}
+
 	ch, err := s.Channel(m.ChannelID)
 	if err != nil {
 		fmt.Printf("Error to delete messages: %v", err)
-		s.ChannelMessageSend(m.ChannelID, "Error to delete messages")
+		s.ChannelMessageSend(logsChannel, "Error to delete messages")
 	}
 
 	if util.CheckChName(ch.Name, ".*música$|.*music$") {
 		return
 	}
 
-	embed := &discordgo.MessageEmbed{
-		Title:       "🔴 Invalid action",
-		Description: "You can't play music here",
-		Color:       0xff0000,
-	}
-
 	if m.Interaction != nil && m.Interaction.Name == "play" {
 		s.ChannelMessageDelete(m.ChannelID, m.ID)
-		s.ChannelMessageSendEmbed(m.ChannelID, embed)
+		throwable.SendErrorEmbed(s, m.ChannelID, "You can't play music here")
 	}
 }
