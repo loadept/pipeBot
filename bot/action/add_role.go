@@ -11,14 +11,19 @@ import (
 type AddRole struct{}
 
 func (ar *AddRole) Execute(s *discordgo.Session, m *discordgo.MessageCreate) {
+	logsChannel := util.GetGuildChannel(s, m.GuildID, ".*logs?")
+	if len(logsChannel) == 0 {
+		throwable.SendErrorEmbed(s, logsChannel, throwable.SomethingWentWrong.Error())
+	}
+
 	targetRole, err := util.ValidateRole(s, m)
 	if err != nil {
-		throwable.SendErrorEmbed(s, m.ChannelID, err.Error())
+		throwable.SendErrorEmbed(s, logsChannel, err.Error())
 		return
 	}
 
 	if err := s.GuildMemberRoleAdd(m.GuildID, m.Mentions[0].ID, targetRole.ID); err != nil {
-		throwable.SendErrorEmbed(s, m.ChannelID, "Failed to establish role.")
+		throwable.SendErrorEmbed(s, logsChannel, "Failed to establish role.")
 		return
 	}
 
@@ -27,5 +32,6 @@ func (ar *AddRole) Execute(s *discordgo.Session, m *discordgo.MessageCreate) {
 		Description: fmt.Sprintf("Member **%s** has been assigned to the role **%s**", m.Mentions[0].Username, targetRole.Name),
 		Color:       0x00d8ff,
 	}
-	s.ChannelMessageSendEmbed(m.ChannelID, embed)
+
+	s.ChannelMessageSendEmbed(logsChannel, embed)
 }
