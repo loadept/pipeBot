@@ -1,7 +1,11 @@
 services:
   bot:
-    build: .
     container_name: pipebot
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_VERSION: ${APP_VERSION}
     environment:
       - APP_ID=${APP_ID}
       - PUBLIC_KEY=${PUBLIC_KEY}

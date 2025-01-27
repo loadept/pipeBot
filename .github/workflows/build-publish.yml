@@ -25,6 +25,8 @@ jobs:
           script: |
             cd services/pipeBot
             git pull
+            tag=$(git describe --tags)
+            export APP_VERSION="${tag//v/''}"
             docker compose pull
             docker compose up --build -d 
             docker system prune -f
